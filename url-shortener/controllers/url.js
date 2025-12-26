@@ -11,6 +11,15 @@ async function handleGenerateNewShortURL(req, res){
     await URL.create({
         shortId: shortId,
         redirectUrl: req.body.redirect_url,
+        createdBy: req.user._id,
+    })
+
+    const allUrls = await URL.find({createdBy: req.user._id});
+    
+
+    return res.render("home",{
+        "shortId": shortId,
+         allUrls: allUrls,
     })
 
     return res.json({
@@ -50,8 +59,24 @@ async function handleAnalytics(req, res){
     })
 }
 
+async function handleGetAllURLs(req, res){
+    let allUrls;
+    if(!req.user?.isAdmin){
+        allUrls = await URL.find({createdBy: req.user._id});
+    }else{
+        allUrls = await URL.find({});
+    }
+    
+    res.render("home", {
+        isAdmin: req.user?.isAdmin,
+        allUrls: allUrls,
+    })
+}
+
+
 module.exports = {
     handleGenerateNewShortURL,
     handleRedirectShortURL,
-    handleAnalytics
+    handleAnalytics,
+    handleGetAllURLs
 }

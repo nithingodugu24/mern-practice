@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener - Home Page</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(115deg, #3e98ff, #2563eb);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .container {
+            width: 30vw;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #fff;
+        }
+
+        .card {
+            background-color: #fff;
+            color: #000;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-radius: 15px;
+            width: 100%;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        form input[type="url"] {
+            outline: none;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            height: 40px;
+            padding: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        form button {
+            border: none;
+            border-radius: 5px;
+            height: 40px;
+            padding: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            margin-top: 10px;
+
+            background: linear-gradient(50deg, #2563eb, #3e98ff);
+            color: #f2f8ff;
+
+            cursor: pointer;
+            background-size: 200% 200%;
+            transition: background-position 0.3s ease, box-shadow 0.2s ease;
+
+        }
+
+        form button:hover {
+            background-position: right center;
+        }
+
+        .resultCard {
+            margin-top: 20px;
+        }
+
+        .resultCard span {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .shorurl-box {
+            margin-top: 5px;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .shorurl-box .copyIcon {
+            cursor: pointer;
+            color: #3b3b3b;
+            transition: all 0.2s ease;
+        }
+
+        .shorurl-box .copyIcon:hover {
+            color: #7e7e7e;
+        }
+
+        .urlsCard {
+            margin-top: 20px;
+            width: 100%;
+            border-radius: 15px;
+            background-color: #fff;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            overflow: hidden;
+        }
+
+        .urlsCard th,
+        td {
+            background-color: rgba(255, 255, 255, 0.959);
+            padding: 5px;
+
+        }
+
+        .urlsCard th {
+            background-color: rgba(62, 130, 255, 0.699);
+            color: #fff;
+        }
+
+        .urlsCard tr {
+            position: relative;
+        }
+
+        .urlsCard tr::after {
+            content: '';
+            width: 100%;
+            height: 2px;
+            display: inline-block;
+            position: absolute;
+            left: 0px;
+            bottom: 0px;
+            background-color: rgba(182, 182, 182, 0.562);
+        }
+
+        .urlsCard table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <div class="container">
+        <h1>URL Shortener <% if(locals.isAdmin){ %> - Admin Dashboard <% } %>
+        </h1>
+        <div class="card">
+            <form id="formSubmit" action="" method="post">
+                <input type="url" name="redirect_url" placeholder="Enter url" />
+                <button type="submit">Submit</button>
+            </form>
+            <% if (locals.shortId) { %>
+                <div class="resultCard">
+                    <span>Your short link created: </span>
+                    <div class="shorurl-box" id="shorurl-box">
+                        <a id="shortUrl">http://localhost:8000/<%= shortId %></a>
+                        <i class="fa-regular fa-copy copyIcon"></i>
+                    </div>
+                </div>
+                <% } %>
+
+        </div>
+
+        <% if (locals.allUrls){%>
+            <div class="urlsCard">
+                <table>
+                    <tr>
+                        <th>id</th>
+                        <th>clicks</th>
+                    </tr>
+
+                    <% allUrls.forEach(url=> { %>
+                        <tr>
+                            <td>
+                                <a href="/<%=url.shortId%>" target="_blank">
+                                    <%=url.shortId%>
+                                </a>
+                            </td>
+                            <td>
+                                <%=url.visitHistory.length%>
+                            </td>
+                        </tr>
+                        <% }) %>
+
+                </table>
+            </div>
+            <%}%>
+    </div>
+    <script>
+        const shortUrlBox = document.getElementById("shorurl-box");
+        shortUrlBox.addEventListener("click", (e) => {
+            shortUrlBox.style.color = "#00660d";
+            navigator.clipboard.writeText(document.getElementById("shortUrl").textContent)
+
+        })
+    </script>
+</body>
+
+
+</html>
